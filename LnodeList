@@ -1,0 +1,333 @@
+#include<iostream>
+using namespace std;
+typedef struct Lnode {
+	int data;
+	struct Lnode* next;
+}Lnode;
+
+Lnode* InitList() {
+	Lnode* L = new Lnode;
+	L->next = NULL;
+	return L;
+}
+
+void DestroyList(Lnode* L) {
+	Lnode* p;
+	p = NULL;
+	while (L->next) {
+		p = L;
+		L->next = NULL;
+		delete(p);
+	}
+
+}
+void ClearList(Lnode* L) {
+	L->next = NULL;
+}
+
+int ListLength(Lnode* L) {
+	int i = 0;
+	Lnode* p;
+	p = L->next;
+	while (p != NULL) {
+		i++;
+		p = p->next;
+	}
+	return i;
+}
+
+int GetElem(Lnode* L, int site) {
+	Lnode* p;
+	p = L->next;
+	int i = 1;
+	while (i < site) {
+		p = p->next;
+		i++;
+	}
+	return p->data;
+}
+
+double PriorElem(Lnode* L, int e) {
+	Lnode* p, * pre;
+	pre = L;
+	p = pre->next;
+	int time = 0;
+	while (p && p->data != e) {
+		pre = p;
+		p = pre->next;
+		time++;
+	}
+	if (time == 0) {
+		return 0.1;
+	}
+	else if (time > (ListLength(L) - 1)) {
+		return 0.2;
+	}
+	else {
+		return pre->data;
+	}
+}
+
+int NextElem(Lnode* L, int e) {
+	Lnode* p;
+	p = L->next;
+	int time = 0;
+	while (p && p->data == e) {
+		p = p->next;
+		time++;
+	}
+	if (time == (ListLength(L) - 1)) {
+		return 0.1;
+	}
+	else if (time > (ListLength(L) - 1)) {
+		return 0.2;
+	}
+	else {
+		return p->next->data;
+	}
+}
+
+int LocateElem(Lnode* L, int e) {
+	Lnode* p;
+	int site = 0;
+	p = L->next;
+	while (p) {
+		site++;
+		if (p->data == e) {
+			return site;
+		}
+	}
+	return 0;
+}
+
+void ListInsert(Lnode* L, int site, int e) {
+	Lnode* pre, * p;
+	pre = L;
+	p = pre->next;
+	for (int i = 1;i < site;i++) {
+		pre = p;
+		p = pre->next;
+	}
+	Lnode* q = new Lnode;
+	q->data = e;
+	q->next = p;
+	pre->next = q;
+}
+
+void ListDelete(Lnode* L, int site) {
+	Lnode* p, * q;
+	p = L;
+	q = p->next;
+	for (int i = 1;i < site;i++) {
+		p = q;
+		q = p->next;
+	}
+	p->next = q->next;
+	delete(q);
+}
+
+void ListInput(Lnode* L, int length) {
+	Lnode* pre, * p;
+	pre = L;
+	for (int i = 0;i < length;i++) {
+		p = new Lnode;
+		p->next = NULL;
+		cin >> p->data;
+		pre->next = p;
+		pre = p;
+	}
+}
+
+void ListInverseInput(Lnode* L, int length){
+	Lnode* p;
+	for(int i=length;i>0;i--){
+		p=new Lnode;
+		cin >> p->data;
+		p->next=L->next;
+		L->next=p;
+	}
+}
+int main() {
+	Lnode* L = NULL;
+	do {
+		cout << "可执行操作有(输入其他符号退出程序)：" << endl;
+		cout << "*********************************************************" << endl;
+		cout << "***************  1.初始化或重置链表      ****************" << endl;
+		cout << "***************  2.销毁链表              ****************" << endl;
+		cout << "***************  3.清空链表              ****************" << endl;
+		cout << "***************  4.链表长度              ****************" << endl;
+		cout << "***************  5.指定位置的元素值      ****************" << endl;
+		cout << "***************  6.链表已存在元素的位序  ****************" << endl;
+		cout << "***************  7.求输入元素的直接前驱  ****************" << endl;
+		cout << "***************  8.求输入元素的直接后继  ****************" << endl;
+		cout << "***************  9.在第i个位置插入元素   ****************" << endl;
+		cout << "***************  10.删除第i个元素        ****************" << endl;
+		cout << "***************  11.输出所有的链表元素   ****************" << endl;
+		cout << "***************  12.初始化并用头插输入   ****************" << endl;
+		cout << "***************  13.实现单链表的逆序存放 ****************" << endl;
+		cout << "*********************************************************" << endl;
+		int select;
+		cin >> select;
+		if(L==NULL){
+			if(select!=1 && select!=12 && select!=13){
+				cout << "你需要先初始化函数再进行运算。" << endl;
+				break;
+			}
+		}
+		system("cls");
+		switch (select)
+		{
+		case 1: {
+			L = InitList();
+			cout << "链表初始化成功。" << endl;
+			break;
+		}
+
+		case 2: {
+			DestroyList(L);
+			cout << "链表销毁成功。" << endl;
+			break;
+		}
+
+		case 3: {
+			ClearList(L);
+			cout << "链表清空成功" << endl;
+			break;
+		}
+
+		case 4: {
+			cout << "链表的长度为" << ListLength(L) << "。" << endl;
+			break;
+		}
+
+		case 5: {
+			int site;
+			cout << "请输入查找元素的位置。" << endl;
+			cin >> site;
+			if (site<1 && site>ListLength(L)) {
+				cout << "输入的元素位置不正确。" << endl;
+			}
+			else {
+				cout << "该位置元素的数值为" << GetElem(L, site) << "。" << endl;
+			}
+			break;
+		}
+
+		case 6: {
+			cout << "请输入要查找位置的元素的数值。" << endl;
+			int e;
+			cin >> e;
+			int site = LocateElem(L, e);
+			if (site == 0) {
+				cout << "该链表中没有此元素" << endl;
+			}
+			else {
+				cout << "该元素的位置为" << site << endl;
+			}
+			break;
+		}
+
+		case 7: {
+			int e;
+			cout << "请输入要查找其前驱的元素的数值。" << endl;
+			cin >> e;
+			double r = PriorElem(L, e);
+			if (r == 0.1) {
+				cout << "该元素无前驱元素。" << endl;
+			}
+			else if (r == 0.2) {
+				cout << "该链表查无此元素。" << endl;
+			}
+			else {
+				cout << "其前驱元素的数值为" << (int)r << endl;
+			}
+			break;
+		}
+
+		case 8: {
+			int e;
+			cout << "请输入要查找其后继的元素的数值。" << endl;
+			cin >> e;
+			double r = NextElem(L, e);
+			if (r == 0.1) {
+				cout << "该元素无后继元素。" << endl;
+			}
+			else if (r == 0.2) {
+				cout << "该链表查无此元素。" << endl;
+			}
+			else {
+				cout << "其后继元素的数值为" << (int)r << endl;
+			}
+			break;
+		}
+
+		case 9: {
+			int site, e;
+			cout << "请分别输入插入元素的位置以及数值。" << endl;
+			cin >> site >> e;
+			if (site > ListLength(L) && site < 1) {
+				cout << "输入的元素位置不正确。" << endl;
+			}
+			else
+			{
+				ListInsert(L, site, e);
+				cout << "元素插入成功。" << endl;
+			}
+			break;
+		}
+
+		case 10: {
+			int site;
+			cout << "请输入要删除元素的位置。" << endl;
+			cin >> site;
+			if (site > ListLength(L) && site < 1) {
+				cout << "输入的元素位置不正确。" << endl;
+			}
+			else {
+				ListDelete(L, site);
+				cout << "元素删除成功。" << endl;
+			}
+			break;
+		}
+
+		case 11: {
+			Lnode* p = L->next;
+			cout << "该链表中所有元素为：" << endl;
+			while (p) {
+				cout << p->data << ";";
+				p = p->next;
+			}
+			cout << endl;
+			break;
+		}
+
+		case 12: {
+			L = InitList();
+			int length;
+			cout << "输入要插入元素的个数。" << endl;
+			cin >> length;
+			cout << "请分别输入插入的元素数值。" << endl;
+			ListInput(L, length);
+			cout << "元素输入成功。" << endl;
+			break;
+		}
+
+		case 13: {
+			L=InitList();
+			int length;
+			cout << "输入要插入元素的个数。" << endl;
+			cin >> length;
+			cout << "请分别输入插入的元素数值。" << endl;
+			ListInverseInput(L, length);
+			cout << "元素逆序存放成功。" << endl;
+			break;
+		}
+
+		default: {
+			exit(0);
+			break;
+		}
+		}
+	} while (true);
+	return 0;
+}
